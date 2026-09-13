@@ -12,7 +12,7 @@ public static class TareaValidator
 
     public static Resultado Validar(string? titulo)
     {
-        var normalizado = titulo?.Trim();
+        var normalizado = titulo;
 
         if (string.IsNullOrEmpty(normalizado))
             return new Resultado(false, "El título es obligatorio.", null);
