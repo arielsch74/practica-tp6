@@ -76,3 +76,5 @@ cd frontend && npm test -- --run
 | `demo-c4-paso1..3` | Workflow construido incrementalmente | Corridas pre-calentadas de la demo C4 (PRs abiertos contra `demo-c4-inicio`) |
 
 > Nota: en las ramas `demo-c4-paso*` el trigger `pull_request` va **sin filtro de base** para que las corridas se disparen en PRs contra `demo-c4-inicio` (el YAML que enseña la guía filtra a `main`).
+
+<!-- deploy de la toma 13: 2026-09-16T14:04:14Z -->
