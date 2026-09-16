@@ -122,3 +122,31 @@ jobs:
         with:
           name: coverage-frontend
           path: frontend-coverage
+
+  deploy-qa:
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]     # sin CI verde no hay deploy
+    if: github.ref == 'refs/heads/main'        # los PRs verifican; solo main despliega
+    environment: qa
+    steps:
+      - name: Disparar deploy en Render (backend + front) — del commit verificado
+        env:
+          HOOK_API: ${{ secrets.RENDER_HOOK_API_QA }}
+          HOOK_FRONT: ${{ secrets.RENDER_HOOK_FRONT_QA }}
+        run: |
+          curl -fsS --max-time 30 "$HOOK_API&ref=$GITHUB_SHA"
+          curl -fsS --max-time 30 "$HOOK_FRONT&ref=$GITHUB_SHA"
+
+      - name: Smoke test (espera el cold start + build)
+        shell: bash
+        run: |
+          echo "Esperando a que QA esté vivo..."
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 10 "https://practica-tp6-api-qa.onrender.com/health" \
+               && curl -fsS --max-time 10 "https://practica-tp6-api-qa.onrender.com/api/tareas" > /dev/null \
+               && curl -fsS --max-time 10 "https://practica-tp6-front-qa.onrender.com/" > /dev/null; then
+              echo "✅ QA responde (API + BD + front)"; exit 0
+            fi
+            sleep 20
+          done
+          echo "❌ QA no respondió a tiempo"; exit 1
