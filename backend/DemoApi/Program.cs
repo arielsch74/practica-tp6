@@ -32,7 +32,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-app.MapGet("/health", () => Results.Ok(new { status = "ok", version = "6.1" }));
+app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
 app.MapGet("/api/tareas", async (AppDbContext db) =>
     await db.Tareas.OrderBy(t => t.Id).ToListAsync());
